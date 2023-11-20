@@ -34,7 +34,29 @@ public class UserDao implements Dao<User> {
     @Override
     public List<User> getallUsers() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getallUsers'");
+                        try{
+                            users.clear();
+            Connection con=DriverManager.getConnection("jdbc:postgresql://localhost:5432/User","postgres","Test");
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("select * from users");
+            while(rs.next()){
+            int id = rs.getInt("user_id");
+            String firstName = rs.getString("first_name");
+            String lastName = rs.getString("last_name");
+            String username = rs.getString("username");
+            users.add(new User(id,username,firstName,lastName));
+            }
+            con.close();
+        
+
+
+
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+
+
+        }
+                        return users;
     }
 
     @Override
@@ -44,6 +66,7 @@ public class UserDao implements Dao<User> {
             Connection con=DriverManager.getConnection("jdbc:postgresql://localhost:5432/User","postgres","Test");
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("Insert into users(user_id,username,first_name,last_name) values('"+user.getId()+"','"+user.getUsername()+"','"+user.getFirstName()+"','"+user.getLastName()+"')");
+            con.close();
 
 
 
@@ -60,6 +83,7 @@ public class UserDao implements Dao<User> {
             Connection con=DriverManager.getConnection("jdbc:postgresql://localhost:5432/User","postgres","Test");
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("update users set first_name='"+updatedValue+"' where username='"+user.getUsername()+"'");
+            con.close();
 
 
 
@@ -76,6 +100,7 @@ public class UserDao implements Dao<User> {
             Connection con=DriverManager.getConnection("jdbc:postgresql://localhost:5432/User","postgres","Test");
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("delete from users where username='"+user.getUsername()+"'");
+            con.close();
 
 
 
@@ -92,15 +117,20 @@ public class UserDao implements Dao<User> {
             Connection con=DriverManager.getConnection("jdbc:postgresql://localhost:5432/User","postgres","Test");
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("select * from users where user_id="+id);
+            if(rs.next()){
             String firstName = rs.getString("first_name");
             String lastName = rs.getString("last_name");
             String username = rs.getString("username");
             System.out.println("User is: "+firstName+" "+lastName+" "+username);
+            }
+            con.close();
+        
 
 
 
         }catch(SQLException e){
             System.out.println(e.getMessage());
+
 
         }
 }
